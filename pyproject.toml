@@ -1,0 +1,55 @@
+[build-system]
+requires = [
+    "hatchling",
+    "hatch-requirements-txt",
+    "versioningit",
+]
+build-backend = "hatchling.build"
+
+[project]
+name = "scytale"
+dynamic = ["dependencies", "version"]
+authors = [
+    {name="Flavio Calvo", email="Flavio.Calvo@unil.ch"},
+]
+maintainers = [
+    {name="Flavio Calvo", email="Flavio.Calvo@unil.ch"},
+]
+description = "A toy cryptographic tool"
+readme = "README.md"
+requires-python = ">=3.9"
+keywords = [
+    "cryptography",
+    "cipher"
+]
+classifiers = [
+    "Development Status :: 4 - Beta",
+    "License :: Other/Proprietary License",
+    "Operating System :: OS Independent",
+    "Programming Language :: Python :: 3.9",
+    "Programming Language :: Python :: 3.10",
+    "Programming Language :: Python :: 3.11",
+    "Programming Language :: Python :: 3.12",
+    "Programming Language :: Python :: 3.13",
+    "Programming Language :: Python :: 3 :: Only",
+    "Topic :: Other/Nonlisted Topic",
+]
+
+[tool.hatch.metadata.hooks.requirements_txt]
+files = ["requirements.txt"]
+
+[tool.hatch.version]
+source = "versioningit"
+
+[tool.versioningit.format]
+# Format used when there have been commits since the most recent tag:
+distance = "{base_version}.post{distance}+{vcs}{rev}"
+# Example formatted version: 1.2.3.post42+ge174a1f
+
+# Format used when there are uncommitted changes:
+dirty = "{base_version}+d{build_date:%Y%m%d}"
+# Example formatted version: 1.2.3+d20230922
+
+# Format used when there are both commits and uncommitted changes:
+distance-dirty = "{base_version}.post{distance}+{vcs}{rev}.d{build_date:%Y%m%d}"
+# Example formatted version: 1.2.3.post42+ge174a1f.d20230922
