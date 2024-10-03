@@ -31,6 +31,8 @@ def encoder(n, pos, key):
         if is_cryptonumber:
             new_alphabet = get_alphabet_permutation(str(key))
             key = tuple(key)
+        elif key is None:
+            new_alphabet = get_alphabet_permutation()
         else:
             new_alphabet = key
         permutation = [char2num(c) for c in new_alphabet]
@@ -58,6 +60,8 @@ def decoder(n, pos, key):
         if is_cryptonumber:
             new_alphabet = get_alphabet_permutation(str(key))
             key = tuple(key)
+        elif key is None:
+            new_alphabet = get_alphabet_permutation()
         else:
             new_alphabet = key
         inv_permutation = [char2num(c) for c in new_alphabet]

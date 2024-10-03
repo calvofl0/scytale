@@ -71,7 +71,7 @@ def code_divide(code, n, base=len(get_alphabet())):
     return r
 
 
-def get_alphabet_permutation(key):
+def get_alphabet_permutation(key=None):
     """Map from key to alphabet permutation
 
     This map is surjective, but not injective: it is not a one-to-one map.
@@ -79,6 +79,8 @@ def get_alphabet_permutation(key):
     :param key: Key
     :return: New alphabet
     """
+    if key is None:
+        return _permuted_alphabet
     alphalen = len(get_alphabet())
     step = max(1, alphalen // len(key))
     coded_key = [char2num(c) for c in key]
