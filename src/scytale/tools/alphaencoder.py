@@ -17,6 +17,16 @@ from ..tools.alphabet import char2num, num2char, get_alphabet
 
 
 def unwrap(msg):
+    """String unwrapper
+
+    Removes all characters that do not belong to the alphabet from a given
+    string. They are saved into `plainchrs` and their original position is
+    stored through `wlen`, so that the original string can be recovered.
+
+    :param msg: String
+    :return: Triplet with new string, lengths of the components, and
+             characters splitting the components
+    """
     wlen = []
     plainchrs = ""
     msg0 = ""
@@ -35,6 +45,16 @@ def unwrap(msg):
 
 
 def wrap(msg0, wlen, plainchrs, crop=False):
+    """String wrapper
+
+    The reciprocal function to the `unwrapper`
+
+    :param msg0: The cleaned string, with possibly extra ghost characters
+                 the end
+    :param wlen: Length of the components
+    :param plainchrs: Component-splitting non-alphabetical characters
+    :param crop: Whether to crop the possible extra-characters
+    """
     msg = ""
     head = 0
     for l, c in zip(wlen[:-1], plainchrs):
@@ -49,6 +69,18 @@ def wrap(msg0, wlen, plainchrs, crop=False):
 
 
 def encode_unwrapped(msg0, hexa=False):
+    """Encodes an alphabetical string into numbers
+
+    Two possible encodings: either single letter to single number,
+    and the number is in the range 0:len(alphabet), or with `hexa = True`
+    encoding of 16 characters into 3 32-bit numbers.
+
+    The sequence is padded at the end with repetitions of`alphabet[0]`,
+    if necessary.
+
+    Note: the 3 numbers in the hex-encoding are still represented by
+          64-bit integers, in order to (temporarily) allow for overflows.
+    """
     code = []
     if hexa:
         n = 0
@@ -71,6 +103,14 @@ def encode_unwrapped(msg0, hexa=False):
 
 
 def decode_to_unwrapped(code, hexa=False):
+    """Reciprocal function to `encode_unwrapped`
+
+    Turns a number-coded message into the original alphabet-message
+
+    :param code: The encoded message
+    :param hexa: Type of coding (see `encode_unwrapped`)
+    :return: Original message
+    """
     msg0 = ""
     if hexa:
         n = 0
@@ -90,18 +130,89 @@ def decode_to_unwrapped(code, hexa=False):
 
 
 def encode_wrapped(msg, hexa=False):
+    """Encodes a general message string into numbers
+
+    Two possible encodings: either single letter to single number,
+    and the number is in the range 0:len(alphabet), or with `hexa = True`
+    encoding of 16 characters into 3 32-bit numbers.
+
+    All characters that do not belong to the alphabet from a given
+    string are saved into `plainchrs` and their original position is
+    stored through `wlen`, so that the original string can be recovered.
+
+    Note: the 3 numbers in the hex-encoding are still represented by
+          64-bit integers, in order to (temporarily) allow for overflows.
+
+    :param msg: String to encode
+    :return: Triplet with new string, lengths of the components, and
+             characters splitting the components
+    """
     msg0, wlen, plainchrs = unwrap(msg)
     code = encode_unwrapped(msg0, hexa)
     return code, wlen, plainchrs
 
 
 def decode_and_wrap(code, wlen, plainchrs, hexa=False, crop=False):
+    """Reciprocal function to `encode_wrapped`
+
+    :param code: The encoded message
+    :param wlen: Length of the components
+    :param plainchrs: Component-splitting non-alphabetical characters
+    """
     msg0 = decode_to_unwrapped(code, hexa)
     msg = wrap(msg0, wlen, plainchrs, crop)
     return msg
 
 
 class CryptoNumber(ndarray):
+    """CryptoNumber class
+
+    A number represented with this class has a one-to-one corresponding string
+
+    Those numbers are internally represented by a list of integers, and the
+    length of the list must be a multiple of 3.
+
+    If `fill` is specified, the input list is padded with integers with value
+    `fill` in order to attain a multiple length of 3.
+
+    Examples
+    --------
+
+    >>> cn = CryptoNumber("E====X=====A====M=====P====L====E")
+    CryptoNumber([  5,   6,   4,  13, 256,  48,   5,   0,   0])
+
+    >> 2*cn
+    CryptoNumber([ 10,  12,   8,  26, 512,  96,  10,   0,   0])
+
+    >> cn2 = CryptoNumber([ 10,  12,   8,  26, 512,  96,  10,   0,   0])
+    CryptoNumber([ 10,  12,   8,  26, 512,  96,  10,   0,   0])
+
+    >> print(cn)
+    E====X=====A====M=====P====L====E
+
+    We can further generate a "cleaned key" from a CryptoNumber:
+
+    >> print(cn.key())
+    EXAMPLE
+
+    It is also possible to perform floating point operations with a
+    CryptoNumber:
+
+    >> half_cn = cn/2
+    >> half_cn
+    CryptoNumber([  2.5,   3. ,   2. ,   6.5, 128. ,  24. ,   2.5,   0. ,
+    0. ])
+
+    However, such number does not have anymore a string representation. It can
+    still be fixed by rounding each number:
+
+    >> half_cn.fix()
+    CryptoNumber([  2,   3,   2,   6, 128,  24,   2,   0,   0])
+
+    >> print(half_cn)
+    B====L====f=====F=====H====F====B
+    """
+
     def __new__(subtype, *l, fill=None):
         if len(l) == 1:
             if isinstance(l[0], str):
@@ -163,7 +274,16 @@ class CryptoNumber(ndarray):
         return decode_to_unwrapped(self, hexa=True).strip(get_alphabet()[0])
 
     def key(self):
+        """Returns a key based on the CryptoNumber
+
+        Note: this operation is not injective (it is not a one-to-one map)
+        """
         return type(self)(self.fix().__str__().replace(get_alphabet()[0], ""))
 
     def fix(self):
+        """Fix a CryptoNumber
+
+        Rounds a floating-point based CryptoNumber and converts it to an integer
+        CryptoNumber
+        """
         return self.round().astype(int)

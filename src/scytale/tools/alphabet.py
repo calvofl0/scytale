@@ -30,18 +30,39 @@ _permuted_alphabet = _permuted_alphabet()
 
 
 def get_alphabet():
+    """Returns the alphabet
+
+    :return: Alphabet
+    """
     return _alphabet
 
 
 def char2num(c):
+    """Converts a letter from the alphabet into a number
+
+    :param c: Letter
+    :return: Corresponding number
+    """
     return _alphabet.find(c)
 
 
 def num2char(n):
-    return _alphabet[n]
+    """Converts a number into a letter from the alphabet"""
+    return _alphabet[n % len(get_alphabet())]
 
 
 def code_divide(code, n, base=len(get_alphabet())):
+    """Generalized inplace division for generic base system numbers
+
+    Given a dividend encoded into a list of integers (a *code*),
+    in a big-endian style, divide it in-place by a provided divisor.
+
+    :param code: The dividend stored in a list and encoded in a custom base
+    :param n: The divisor
+    :param base: The base
+
+    :return: Remainder
+    """
     for i in range(len(code) - 1, 0, -1):
         code[i - 1] += (code[i] % n) * base
         code[i] //= n
@@ -51,6 +72,13 @@ def code_divide(code, n, base=len(get_alphabet())):
 
 
 def get_alphabet_permutation(key):
+    """Map from key to alphabet permutation
+
+    This map is surjective, but not injective: it is not a one-to-one map.
+
+    :param key: Key
+    :return: New alphabet
+    """
     alphalen = len(get_alphabet())
     step = max(1, alphalen // len(key))
     coded_key = [char2num(c) for c in key]

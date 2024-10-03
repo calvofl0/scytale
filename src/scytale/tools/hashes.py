@@ -16,6 +16,14 @@ from .alphaencoder import CryptoNumber
 
 
 def sha3hash(msg):
+    """Hash a message
+
+    Uses the SHA3-256 algorithm in order to create a hash that is then
+    converted into a CryptoNumber
+
+    :param msg: Message
+    :return: Hash
+    """
     s = hashlib.sha3_256(bytes(msg, "utf8")).digest()
     return str(
         CryptoNumber(

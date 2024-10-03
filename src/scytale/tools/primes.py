@@ -19,10 +19,23 @@ maxN = 2**20
 
 
 def isprime(n):
+    """Checks if a number is prime
+
+    :param n: Number
+    :return: True/False
+    """
     return n > 1 and all(n % i for i in range(2, int(n**0.5) + 1))
 
 
 def coprime(l):
+    """Find a coprime
+
+    Propose a number that is coprime to `l`, strictly smaller than `l` but
+    as close as possible, and with a Hamming weight of 1 if possible.
+
+    :param l: Number
+    :return: Coprime
+    """
     for i in range(int(np.log(l - 1) / np.log(2)), 2, -1):
         e = 2**i + 1
         if np.gcd(e, l) == 1:
@@ -34,6 +47,11 @@ def coprime(l):
 
 
 def primeList(rg):
+    """Establish a list of prime numbers within a range
+
+    :param rg: Range
+    :return: List of primes
+    """
     sieve = (isprime(i) for i in count(2))
     return list(compress(rg, sieve))
 

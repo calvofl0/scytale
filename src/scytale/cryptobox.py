@@ -12,6 +12,46 @@ from .tools.alphaencoder import encode_wrapped, decode_and_wrap
 
 
 class CryptoBox(object):
+    """CryptoBox class
+
+    This is the main class for encrypting/decrypting messages. The messages
+    are first encoded into lists of integers, and then call-back routines are
+    used for encrypting does according to an implemented cypher method.
+
+    By default, the text-to-number encoding of messages transforms each letter
+    of the alphabet into its own position in the alphabet. However, if
+    `encoder.hexa` is `True`, the `CryptoNumber` encoding scheme is used
+    instead (this allows more complex arithmetics on 32bit integers).
+
+    If both `encoder.hexa` and `encoder.double_count` are `True`, then encoder
+    will then be able to perform full 64-bit arithmetic, and the result will
+    be decoded accordingly, producing an output string twice as long.
+
+    Usage
+    -----
+
+    For `m` a given number at position `pos` in the original messages, and `w`
+    its cyphered representation with the encryption key `key`, we will define
+    the following call-backs:
+
+    >>> def encoder(m, pos, key):
+    >>>     ...
+    >>>     return w
+
+    >>> def decoder(w, pos, key):
+    >>>     ...
+    >>>     return m
+
+    We can then instantiate the CryptoBox:
+
+    >>> cb = CryptoBox(encoder, decoder)
+
+    And encrypt and decrypt messages:
+
+    >>> cyph = cb.encrypt(msg, key)
+    >>> msg = cb.decrypt(cyph, key)
+    """
+
     def __init__(self, encoder, decoder, hexa=False, double_count=False):
         self._encoder = encoder
         self._decoder = decoder
@@ -23,6 +63,12 @@ class CryptoBox(object):
             self._double_count = encoder.double_count
 
     def encrypt(self, msg, key):
+        """Encrypt a message
+
+        :param msg: Plain message
+        :param key: Key
+        :return: Encrypted message
+        """
         code, wlen, plainchrs = encode_wrapped(msg, self._hexa)
         cipher_code = []
         for pos, n in enumerate(code):
@@ -40,6 +86,12 @@ class CryptoBox(object):
             return cipher_msg[: sum(wlen) % 16 - 16]
 
     def decrypt(self, cipher_msg, key):
+        """Decrypt a message
+
+        :param msg: Encrypted message
+        :param key: Key
+        :return: Plain message
+        """
         if self._hexa:
             npad = len(cipher_msg)
             cipher_msg = cipher_msg.strip(" ")
