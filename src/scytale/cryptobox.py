@@ -62,7 +62,7 @@ class CryptoBox(object):
         if hasattr(encoder, "double_count"):
             self._double_count = encoder.double_count
 
-    def encrypt(self, msg, key):
+    def encrypt(self, msg, key=None):
         """Encrypt a message
 
         :param msg: Plain message
@@ -85,7 +85,7 @@ class CryptoBox(object):
         else:
             return cipher_msg[: sum(wlen) % 16 - 16]
 
-    def decrypt(self, cipher_msg, key):
+    def decrypt(self, cipher_msg, key=None):
         """Decrypt a message
 
         :param msg: Encrypted message
