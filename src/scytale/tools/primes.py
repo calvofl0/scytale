@@ -14,8 +14,11 @@ import numpy as np
 from scipy.optimize import fsolve
 from scipy.special import expi
 
+from .rng import MT19937
+
 
 maxN = 2**20
+_rng = MT19937()
 
 
 def isprime(n):
@@ -70,3 +73,10 @@ pmax = int((pmid / 3 + 2 * len(primeList.all)) / 3)
 pmin = int(np.min(np.argwhere(primeList.all > 2**32 / primeList.all[pmax])))
 primeList.bigs = primeList.all[pmax:]
 primeList.smalls = primeList.all[pmin : min(pmid, pmin + len(primeList.bigs))]
+primeList.sp = primeList.all[np.where(primeList.all < 2**32)]
+
+
+def random_prime(rng = _rng):
+    return rng.choice(primeList.sp)
+
+del MT19937, _rng

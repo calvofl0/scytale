@@ -17,8 +17,7 @@ from .cryptobox import CryptoBox
 from .tools.alphaencoder import CryptoNumber, modpow
 from .tools.alphabet import char2num, num2char, get_alphabet, get_alphabet_permutation
 from .tools.hashes import sha3hash
-
-
+from .tools.primes import random_prime
 from .tools.rng import MT19937
 
 __all__ = [
@@ -31,6 +30,7 @@ __all__ = [
     "get_alphabet_permutation",
     "sha3hash",
     "MT19937",
+    "random_prime",
 ]
 
 __version__ = version(__package__)
