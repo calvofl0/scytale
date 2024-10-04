@@ -14,7 +14,7 @@ from importlib.metadata import version
 from . import cyphers
 from . import tools
 from .cryptobox import CryptoBox
-from .tools.alphaencoder import CryptoNumber
+from .tools.alphaencoder import CryptoNumber, modpow
 from .tools.alphabet import char2num, num2char, get_alphabet, get_alphabet_permutation
 from .tools.hashes import sha3hash
 

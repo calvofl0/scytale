@@ -12,6 +12,7 @@ from collections.abc import Iterable
 
 from numpy import integer as npinteger
 from numpy import ndarray
+from numpy import vectorize
 
 from ..tools.alphabet import char2num, num2char, get_alphabet
 
@@ -287,3 +288,8 @@ class CryptoNumber(ndarray):
         CryptoNumber
         """
         return self.round().astype(int)
+
+
+@vectorize
+def modpow(base, exp, mod=None):
+    return pow(int(base), int(exp), mod if mod is None else int(mod))
