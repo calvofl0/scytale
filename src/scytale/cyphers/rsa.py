@@ -46,4 +46,4 @@ RSA_coder.double_count = True
 encoder = RSA_coder
 decoder = RSA_coder
 
-del MT19937, RSA_coder, _rng
+del MT19937, _rng
